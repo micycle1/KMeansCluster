@@ -15,7 +15,7 @@ class ClusteringCenter extends Point {
 	}
 
 	void addPointToCluster(int index) {
-		Point p = Process.INSTANCES.get(index);
+		Point p = Process.POINTS.get(index);
 		clusterPoints.add(index);
 		double[] po = p.getPosition();
 		for (int i = 0; i < this.dimension; ++i) {
@@ -34,7 +34,7 @@ class ClusteringCenter extends Point {
 	double evaluate() {
 		double ret = 0.0;
 		for (int in : clusterPoints) {
-			ret += Point.squareDistance(Process.INSTANCES.get(in), this);
+			ret += Point.squareDistance(Process.POINTS.get(in), this);
 		}
 		return ret;
 	}

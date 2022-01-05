@@ -1,5 +1,8 @@
 package micycle.kmeanscluster;
 
+/**
+ * TODO make as interface; implement 2d, 3d, Nd
+ */
 class Point {
 	
 	protected double[] pos;
@@ -24,9 +27,6 @@ class Point {
 	}
 
 	public static double euclideanDistance(Point p1, Point p2) {
-		if (p1.pos.length != p2.pos.length) {
-			return -1.0;
-		}
 		double[] p = new double[p1.pos.length];
 		for (int i = 0; i < p1.pos.length; ++i) {
 			p[i] = p1.pos[i] - p2.pos[i];
@@ -39,9 +39,6 @@ class Point {
 	}
 
 	public static double squareDistance(Point p1, Point p2) {
-		if (p1.pos.length != p2.pos.length) {
-			return -1.0;
-		}
 		double[] p = new double[p1.pos.length];
 		for (int i = 0; i < p1.pos.length; ++i) {
 			p[i] = p1.pos[i] - p2.pos[i];

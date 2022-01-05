@@ -29,7 +29,7 @@ class Hypersphere extends Point {
 
 	void addInstance(int index) {
 		instances.add(index);
-		double[] pos = Process.INSTANCES.get(index).getPosition();
+		double[] pos = Process.POINTS.get(index).getPosition();
 		for (int i = 0; i < Process.DIMENSION; i++) {
 			sumOfPoints[i] += pos[i];
 		}
@@ -40,7 +40,7 @@ class Hypersphere extends Point {
 		for (int i = 0; i < Process.DIMENSION; i++) {
 			this.pos[i] = this.sumOfPoints[i] / size;
 		}
-		this.radius = Point.euclideanDistance(this, Process.INSTANCES.get(this.getFarestPoint(this)));
+		this.radius = Point.euclideanDistance(this, Process.POINTS.get(this.getFarestPoint(this)));
 	}
 
 	int size() {
@@ -117,7 +117,7 @@ class Hypersphere extends Point {
 		double maxDist = 0.0;
 		int maxIndex = -1;
 		for (int i : this.instances) {
-			Point pp = Process.INSTANCES.get(i);
+			Point pp = Process.POINTS.get(i);
 			double dist = Point.euclideanDistance(p, pp);
 			if (dist >= maxDist) {
 				maxDist = dist;
@@ -127,12 +127,16 @@ class Hypersphere extends Point {
 		return maxIndex;
 	}
 
-	// split and store it to this node's children field, & return the children.
+	/**
+	 * split and store it to this node's children field, & return the children.
+	 * 
+	 * @return
+	 */
 	Hypersphere[] split() {
 		int firstCenter = this.getFarestPoint(this);
-		Point fir = Process.INSTANCES.get(firstCenter);
+		Point fir = Process.POINTS.get(firstCenter);
 		int secondCenter = this.getFarestPoint(fir);
-		Point sec = Process.INSTANCES.get(secondCenter);
+		Point sec = Process.POINTS.get(secondCenter);
 		this.children = new Hypersphere[2];
 		this.children[0] = new Hypersphere();
 		this.children[1] = new Hypersphere();
@@ -142,7 +146,7 @@ class Hypersphere extends Point {
 			if (i == firstCenter || i == secondCenter) {
 				continue;
 			}
-			Point p = Process.INSTANCES.get(i);
+			Point p = Process.POINTS.get(i);
 			double dist1 = Point.euclideanDistance(p, fir), dist2 = Point.euclideanDistance(p, sec);
 			if (dist1 < dist2) {
 				this.children[0].addInstance(i);
@@ -170,7 +174,7 @@ class Hypersphere extends Point {
 		}
 		if (hp.children == null) {
 			for (int pi : hp.instances) {
-				Point p = Process.INSTANCES.get(pi);
+				Point p = Process.POINTS.get(pi);
 				double minDist = Double.MAX_VALUE;
 				int minCenIndex = 0, index = 0;
 				for (ClusteringCenter cc : Process.CENTERS) {

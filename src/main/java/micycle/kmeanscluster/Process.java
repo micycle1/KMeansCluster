@@ -1,43 +1,27 @@
 package micycle.kmeanscluster;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Map.Entry;
-import java.util.Properties;
 import java.util.Random;
-
-class LoadProperties {
-
-	static String load(String p) {
-		Properties prop = new Properties();
-		try {
-			InputStream is = new LoadProperties().getClass().getResourceAsStream("conf.properties");
-			prop.load(new BufferedReader(new InputStreamReader(is)));
-			is.close();
-			return prop.getProperty(p);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
-}
 
 public class Process {
 
+	public static void main(String[] args) {
+		populate(10000);
+		cluster(20);
+		CENTERS.forEach(c -> System.out.println(Arrays.toString(c.pos)));
+	}
+
 	static ArrayList<ClusteringCenter> CENTERS = new ArrayList<ClusteringCenter>();
-	static ArrayList<Point> INSTANCES = new ArrayList<Point>();
+	static ArrayList<Point> POINTS = new ArrayList<Point>();
 	static ArrayList<ClusteringCenter> PRE_CENS;
 	static int DIMENSION;
-	static int MAX_INSTANCE_NUM_NOT_SPLIT = Integer.valueOf(LoadProperties.load("max_instances_num_not_split"));
+	static int MAX_INSTANCE_NUM_NOT_SPLIT = 100; // TODO investigate
+	static int TRY_TIMES = 1;
 	static Hypersphere BALL_TREE;
-	static int TRY_TIMES = Integer.valueOf(LoadProperties.load("try_times"));
 	// map cluster center results to its evaluation
 	static ArrayList<Entry<ArrayList<ClusteringCenter>, Double>> RESULTS = new ArrayList<Entry<ArrayList<ClusteringCenter>, Double>>(
 			TRY_TIMES);
@@ -54,23 +38,12 @@ public class Process {
 		return true;
 	}
 
-	// gives your dataset's path and this function will build the internal data
-	// structures.
-	public static void loadData(String path) throws IOException {
-		BufferedReader r = new BufferedReader(new InputStreamReader(new FileInputStream(new File(path))));
-		String line;
-		while ((line = r.readLine()) != null) {
-			String[] fs = line.split(" +");
-			double[] pos = new double[fs.length];
-			int i = 0;
-			for (String s : fs) {
-				pos[i++] = Double.valueOf(s + ".0");
-			}
-			Process.DIMENSION = fs.length;
-			Process.INSTANCES.add(new Point(pos));
+	public static void populate(int n) {
+		for (int i = 0; i < n; i++) {
+			double[] pos = new double[] { Math.random(), Math.random() };
+			Process.DIMENSION = 2; // TODO or 2?
+			Process.POINTS.add(new Point(pos));
 		}
-		r.close();
-
 		BALL_TREE = BallTree.buildAnInstance(null);
 	}
 
@@ -89,19 +62,20 @@ public class Process {
 	 */
 	public static Entry<Integer[], Double> cluster(int k) {
 		for (int t = 0; t < Process.TRY_TIMES; t++) {
-			// random pick the cluster centers
+			// randomly choose initial cluster centers
 			CENTERS.clear();
 			if (PRE_CENS != null) {
 				PRE_CENS = null;
 			}
+
 			Random rand = new Random();
 			HashSet<Integer> rSet = new HashSet<Integer>();
-			int size = INSTANCES.size();
+			int size = POINTS.size();
 			while (rSet.size() < k) {
 				rSet.add(rand.nextInt(size));
 			}
 			for (int index : rSet) {
-				Process.CENTERS.add(new ClusteringCenter(Process.INSTANCES.get(index)));
+				Process.CENTERS.add(new ClusteringCenter(Process.POINTS.get(index)));
 			}
 
 			// iteration until convergence
@@ -121,7 +95,7 @@ public class Process {
 			Hypersphere.COUNT = 0;
 		}
 
-		// �ҵ����������������С��
+		// Find the smallest score among multiple trials
 		double minEvaluate = Double.MAX_VALUE;
 		int minIndex = 0, i = 0;
 		for (Entry<ArrayList<ClusteringCenter>, Double> entry : RESULTS) {
@@ -134,8 +108,8 @@ public class Process {
 		}
 		CENTERS = RESULTS.get(minIndex).getKey();
 		double evaluate = RESULTS.get(minIndex).getValue();
-		// ��instance��Ӧ�ľ����ŷ���
-		Integer[] ret = new Integer[INSTANCES.size()];
+		// Return the cluster number corresponding to the instance
+		Integer[] ret = new Integer[POINTS.size()];
 		for (int cNum = 0; cNum < CENTERS.size(); cNum++) {
 			ClusteringCenter cc = CENTERS.get(cNum);
 			for (int pi : cc.belongedPoints()) {
@@ -146,8 +120,8 @@ public class Process {
 	}
 
 	/**
-	 * gives the evaluation and differential of each k in specific range.you can use
-	 * these infos to choose a good k for your clustering
+	 * Gives the evaluation and differential of each k in specific range. You can
+	 * use these infos to choose a good k for your clustering
 	 *
 	 * @param startK gives the start point of k for the our try on k(inclusive)
 	 * @param endK   gives the end point(exclusive)
