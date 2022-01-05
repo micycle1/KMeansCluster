@@ -6,14 +6,14 @@ class BallTree {
 	static Hypersphere buildAnInstance(Hypersphere cur) {
 		if (cur == null) {
 			cur = new Hypersphere();
-			for (int i = 0; i < Process.POINTS.size(); ++i) {
+			for (int i = 0; i < KMeans.POINTS.size(); ++i) {
 				cur.addInstance(i);
 			}
 			cur.endAdding();
 		}
 		Hypersphere[] ch = cur.split();
 		for (Hypersphere hp : ch) {
-			if (hp.size() <= Process.MAX_INSTANCE_NUM_NOT_SPLIT) {
+			if (hp.size() <= KMeans.MAX_INSTANCE_NUM_NOT_SPLIT) {
 				continue;
 			}
 			buildAnInstance(hp);

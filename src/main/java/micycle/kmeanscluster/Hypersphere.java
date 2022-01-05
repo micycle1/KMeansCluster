@@ -17,29 +17,29 @@ class Hypersphere extends Point {
 		super(center.pos);
 		this.radius = r;
 		this.instances = ins;
-		sumOfPoints = new double[Process.DIMENSION];
+		sumOfPoints = new double[KMeans.DIMENSION];
 	}
 
 	Hypersphere() {
-		super(new double[Process.DIMENSION]);
+		super(new double[KMeans.DIMENSION]);
 		instances = new LinkedList<Integer>();
-		sumOfPoints = new double[Process.DIMENSION];
+		sumOfPoints = new double[KMeans.DIMENSION];
 	}
 
 	void addInstance(int index) {
 		instances.add(index);
-		double[] pos = Process.POINTS.get(index).getPosition();
-		for (int i = 0; i < Process.DIMENSION; i++) {
+		double[] pos = KMeans.POINTS.get(index).getPosition();
+		for (int i = 0; i < KMeans.DIMENSION; i++) {
 			sumOfPoints[i] += pos[i];
 		}
 	}
 
 	void endAdding() {
 		int size = instances.size();
-		for (int i = 0; i < Process.DIMENSION; i++) {
+		for (int i = 0; i < KMeans.DIMENSION; i++) {
 			this.pos[i] = this.sumOfPoints[i] / size;
 		}
-		this.radius = this.dist(Process.POINTS.get(this.getFarestPoint(this)));
+		this.radius = this.dist(KMeans.POINTS.get(this.getFarestPoint(this)));
 	}
 
 	int size() {
@@ -60,13 +60,13 @@ class Hypersphere extends Point {
 	 */
 	int isInSingleCluster() {
 		ALL_COUNT++;
-		PriorityQueue<Entry<Integer, Double>> maxpq = new PriorityQueue<Entry<Integer, Double>>(Process.CENTERS.size(),
+		PriorityQueue<Entry<Integer, Double>> maxpq = new PriorityQueue<Entry<Integer, Double>>(KMeans.CENTERS.size(),
 				(e1, e2) -> Double.compare(e1.getValue(), e2.getValue()));
-		PriorityQueue<Entry<Integer, Double>> minpq = new PriorityQueue<Entry<Integer, Double>>(Process.CENTERS.size(),
+		PriorityQueue<Entry<Integer, Double>> minpq = new PriorityQueue<Entry<Integer, Double>>(KMeans.CENTERS.size(),
 				(e1, e2) -> Double.compare(e1.getValue(), e2.getValue()));
 
 		int index = 0;
-		for (ClusteringCenter cen : Process.CENTERS) {
+		for (Cluster cen : KMeans.CENTERS) {
 			maxpq.add(new SimpleEntry<Integer, Double>(index, this.maxDistance(cen)));
 			minpq.add(new SimpleEntry<Integer, Double>(index, this.minDistance(cen)));
 			index++;
@@ -98,7 +98,7 @@ class Hypersphere extends Point {
 		double maxDist = 0.0;
 		int maxIndex = -1;
 		for (int i : this.instances) {
-			double dist = p.dist(Process.POINTS.get(i));
+			double dist = p.dist(KMeans.POINTS.get(i));
 			if (dist >= maxDist) {
 				maxDist = dist;
 				maxIndex = i;
@@ -114,9 +114,9 @@ class Hypersphere extends Point {
 	 */
 	Hypersphere[] split() {
 		int firstCenter = this.getFarestPoint(this);
-		Point fir = Process.POINTS.get(firstCenter);
+		Point fir = KMeans.POINTS.get(firstCenter);
 		int secondCenter = this.getFarestPoint(fir);
-		Point sec = Process.POINTS.get(secondCenter);
+		Point sec = KMeans.POINTS.get(secondCenter);
 		this.children = new Hypersphere[2];
 		this.children[0] = new Hypersphere();
 		this.children[1] = new Hypersphere();
@@ -126,7 +126,7 @@ class Hypersphere extends Point {
 			if (i == firstCenter || i == secondCenter) {
 				continue;
 			}
-			final Point p = Process.POINTS.get(i);
+			final Point p = KMeans.POINTS.get(i);
 			final double dist1 = p.distSquared(fir);
 			final double dist2 = p.distSquared(sec);
 			if (dist1 < dist2) {
@@ -147,7 +147,7 @@ class Hypersphere extends Point {
 	static void locateAndAssign(Hypersphere hp) {
 		int clusterIndex = hp.isInSingleCluster();
 		if (clusterIndex != -1) {
-			ClusteringCenter cc = Process.CENTERS.get(clusterIndex);
+			Cluster cc = KMeans.CENTERS.get(clusterIndex);
 			for (int pi : hp.instances) {
 				cc.addPointToCluster(pi);
 			}
@@ -155,10 +155,10 @@ class Hypersphere extends Point {
 		}
 		if (hp.children == null) {
 			for (int pi : hp.instances) {
-				Point p = Process.POINTS.get(pi);
+				Point p = KMeans.POINTS.get(pi);
 				double minDist = Double.MAX_VALUE;
 				int minCenIndex = 0, index = 0;
-				for (ClusteringCenter cc : Process.CENTERS) {
+				for (Cluster cc : KMeans.CENTERS) {
 					final double dist = cc.dist(p);
 					if (dist < minDist) {
 						minDist = dist;
@@ -166,7 +166,7 @@ class Hypersphere extends Point {
 					}
 					index++;
 				}
-				ClusteringCenter cen = Process.CENTERS.get(minCenIndex);
+				Cluster cen = KMeans.CENTERS.get(minCenIndex);
 				cen.addPointToCluster(pi);
 			}
 		} else {
