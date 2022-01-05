@@ -1,4 +1,4 @@
-package KMeansCluster;
+package micycle.kmeanscluster;
 
 import java.util.ArrayList;
 

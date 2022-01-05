@@ -1,8 +1,8 @@
-package KMeansCluster;
+package micycle.kmeanscluster;
 
 import java.util.ArrayList;
 
-//Ã¿´Îµü´ú³õÊ¼£¬clusterPointsÎª¿Õ£¬ÖÐÐÄÎªÐÂµÄmeanµã
+//Ã¿ï¿½Îµï¿½ï¿½ï¿½ï¿½ï¿½Ê¼ï¿½ï¿½clusterPointsÎªï¿½Õ£ï¿½ï¿½ï¿½ï¿½ï¿½Îªï¿½Âµï¿½meanï¿½ï¿½
 class ClusteringCenter extends Point {
 	private ArrayList<Integer> clusterPoints;
 	private double[] sumOfPoints;

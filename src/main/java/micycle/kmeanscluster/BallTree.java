@@ -1,4 +1,4 @@
-package KMeansCluster;
+package micycle.kmeanscluster;
 
 class BallTree {
 	//When call this function, the parameter should be null

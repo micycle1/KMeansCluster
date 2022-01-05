@@ -1,4 +1,4 @@
-package KMeansCluster;
+package micycle.kmeanscluster;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -113,7 +113,7 @@ public class Process {
 			Hypersphere.COUNT = 0;
 		}
 		
-		//ÕÒµ½¶à´ÎÊÔÑéÖÐÆÀ·Ö×îÐ¡µÄ
+		//ï¿½Òµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð¡ï¿½ï¿½
 		double minEvaluate = Double.MAX_VALUE;
 		int minIndex = 0, i = 0;
 		for(Entry<ArrayList<ClusteringCenter>, Double> entry : RESULTS){
@@ -126,7 +126,7 @@ public class Process {
 		}
 		CENTERS = RESULTS.get(minIndex).getKey();
 		double evaluate = RESULTS.get(minIndex).getValue();
-		//½«instance¶ÔÓ¦µÄ¾ÛÀà±àºÅ·µ»Ø
+		//ï¿½ï¿½instanceï¿½ï¿½Ó¦ï¿½Ä¾ï¿½ï¿½ï¿½ï¿½Å·ï¿½ï¿½ï¿½
 		Integer[] ret = new Integer[INSTANCES.size()];
 		for(int cNum = 0; cNum < CENTERS.size(); cNum++){
 			ClusteringCenter cc = CENTERS.get(cNum);

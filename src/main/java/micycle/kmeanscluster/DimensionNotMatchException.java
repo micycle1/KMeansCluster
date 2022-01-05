@@ -1,4 +1,4 @@
-package KMeansCluster;
+package micycle.kmeanscluster;
 
 public class DimensionNotMatchException extends Exception{
 	/**

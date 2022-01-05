@@ -1,4 +1,4 @@
-package KMeansCluster;
+package micycle.kmeanscluster;
 
 import java.util.Comparator;
 import java.util.LinkedList;
@@ -54,7 +54,7 @@ class Hypersphere extends Point {
 		return Point.euclideanDistance(p, this) - radius;
 	}
 	
-	//Èç¹û²»ÂäÔÚµ¥¶ÀµÄclusterÖÐ£¬¾Í·µ»Ø-1 ·ñÔò·µ»Øcluster centerµÄindex
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Úµï¿½ï¿½ï¿½ï¿½ï¿½clusterï¿½Ð£ï¿½ï¿½Í·ï¿½ï¿½ï¿½-1 ï¿½ï¿½ï¿½ò·µ»ï¿½cluster centerï¿½ï¿½index
 	int isInSingleCluster(){
 		ALL_COUNT++;
 		PriorityQueue<Entry<Integer, Double>> maxpq = new PriorityQueue<Entry<Integer, Double>>(Process.CENTERS.size(), new Comparator<Entry<Integer, Double>>(){
