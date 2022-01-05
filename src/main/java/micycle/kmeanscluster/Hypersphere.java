@@ -1,7 +1,6 @@
 package micycle.kmeanscluster;
 
 import java.util.AbstractMap.SimpleEntry;
-import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.Map.Entry;
 import java.util.PriorityQueue;
@@ -40,7 +39,7 @@ class Hypersphere extends Point {
 		for (int i = 0; i < Process.DIMENSION; i++) {
 			this.pos[i] = this.sumOfPoints[i] / size;
 		}
-		this.radius = Point.euclideanDistance(this, Process.POINTS.get(this.getFarestPoint(this)));
+		this.radius = this.dist(Process.POINTS.get(this.getFarestPoint(this)));
 	}
 
 	int size() {
@@ -48,42 +47,24 @@ class Hypersphere extends Point {
 	}
 
 	double maxDistance(Point p) {
-		return radius + Point.euclideanDistance(p, this);
+		return radius + this.dist(p);
 	}
 
 	double minDistance(Point p) {
-		return Point.euclideanDistance(p, this) - radius;
+		return this.dist(p) - radius;
 	}
 
-	// If not in a separate cluster, return -1, otherwise return the index of the cluster center
+	/**
+	 * @return -1 If not in a separate cluster, otherwise the index of the cluster
+	 *         center
+	 */
 	int isInSingleCluster() {
 		ALL_COUNT++;
 		PriorityQueue<Entry<Integer, Double>> maxpq = new PriorityQueue<Entry<Integer, Double>>(Process.CENTERS.size(),
-				new Comparator<Entry<Integer, Double>>() {
-					public int compare(Entry<Integer, Double> e1, Entry<Integer, Double> e2) {
-						double d1 = e1.getValue(), d2 = e2.getValue();
-						if (d1 > d2) {
-							return 1;
-						}
-						if (d1 < d2) {
-							return -1;
-						}
-						return 0;
-					}
-				});
+				(e1, e2) -> Double.compare(e1.getValue(), e2.getValue()));
 		PriorityQueue<Entry<Integer, Double>> minpq = new PriorityQueue<Entry<Integer, Double>>(Process.CENTERS.size(),
-				new Comparator<Entry<Integer, Double>>() {
-					public int compare(Entry<Integer, Double> e1, Entry<Integer, Double> e2) {
-						double d1 = e1.getValue(), d2 = e2.getValue();
-						if (d1 > d2) {
-							return 1;
-						}
-						if (d1 < d2) {
-							return -1;
-						}
-						return 0;
-					}
-				});
+				(e1, e2) -> Double.compare(e1.getValue(), e2.getValue()));
+
 		int index = 0;
 		for (ClusteringCenter cen : Process.CENTERS) {
 			maxpq.add(new SimpleEntry<Integer, Double>(index, this.maxDistance(cen)));
@@ -117,8 +98,7 @@ class Hypersphere extends Point {
 		double maxDist = 0.0;
 		int maxIndex = -1;
 		for (int i : this.instances) {
-			Point pp = Process.POINTS.get(i);
-			double dist = Point.euclideanDistance(p, pp);
+			double dist = p.dist(Process.POINTS.get(i));
 			if (dist >= maxDist) {
 				maxDist = dist;
 				maxIndex = i;
@@ -129,7 +109,7 @@ class Hypersphere extends Point {
 
 	/**
 	 * split and store it to this node's children field, & return the children.
-	 * 
+	 *
 	 * @return
 	 */
 	Hypersphere[] split() {
@@ -146,8 +126,9 @@ class Hypersphere extends Point {
 			if (i == firstCenter || i == secondCenter) {
 				continue;
 			}
-			Point p = Process.POINTS.get(i);
-			double dist1 = Point.euclideanDistance(p, fir), dist2 = Point.euclideanDistance(p, sec);
+			final Point p = Process.POINTS.get(i);
+			final double dist1 = p.distSquared(fir);
+			final double dist2 = p.distSquared(sec);
 			if (dist1 < dist2) {
 				this.children[0].addInstance(i);
 			} else {
@@ -178,7 +159,7 @@ class Hypersphere extends Point {
 				double minDist = Double.MAX_VALUE;
 				int minCenIndex = 0, index = 0;
 				for (ClusteringCenter cc : Process.CENTERS) {
-					double dist = Point.euclideanDistance(p, cc);
+					final double dist = cc.dist(p);
 					if (dist < minDist) {
 						minDist = dist;
 						minCenIndex = index;

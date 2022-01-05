@@ -1,10 +1,10 @@
 package micycle.kmeanscluster;
 
 /**
- * TODO make as interface; implement 2d, 3d, Nd
+ * An N-dimensional point.
  */
 class Point {
-	
+
 	protected double[] pos;
 	protected int dimension;
 
@@ -13,7 +13,7 @@ class Point {
 		this.dimension = size;
 	}
 
-	public Point(double[] p) {
+	public Point(double... p) {
 		this.pos = p;
 		this.dimension = pos.length;
 	}
@@ -23,29 +23,30 @@ class Point {
 	}
 
 	double[] getPosition() {
-		return pos.clone();
+		return pos;
 	}
 
-	public static double euclideanDistance(Point p1, Point p2) {
-		double[] p = new double[p1.pos.length];
-		for (int i = 0; i < p1.pos.length; ++i) {
-			p[i] = p1.pos[i] - p2.pos[i];
-		}
+	/**
+	 * Calculates the euclidean distance between this point and the other point.
+	 * Assumes the dimensions of each point are the same (this is not checked).
+	 * 
+	 * @param o other point
+	 * @return
+	 */
+	double dist(Point o) {
 		double sum = 0.0;
-		for (int i = 0; i < p1.pos.length; ++i) {
-			sum += p[i] * p[i];
+		for (int i = 0; i < pos.length; ++i) {
+			final double d = pos[i] - o.pos[i];
+			sum += d * d;
 		}
 		return Math.sqrt(sum);
 	}
 
-	public static double squareDistance(Point p1, Point p2) {
-		double[] p = new double[p1.pos.length];
-		for (int i = 0; i < p1.pos.length; ++i) {
-			p[i] = p1.pos[i] - p2.pos[i];
-		}
+	double distSquared(Point o) {
 		double sum = 0.0;
-		for (int i = 0; i < p1.pos.length; ++i) {
-			sum += p[i] * p[i];
+		for (int i = 0; i < pos.length; ++i) {
+			final double d = pos[i] - o.pos[i];
+			sum += d * d;
 		}
 		return sum;
 	}

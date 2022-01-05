@@ -34,12 +34,12 @@ class ClusteringCenter extends Point {
 	double evaluate() {
 		double ret = 0.0;
 		for (int in : clusterPoints) {
-			ret += Point.squareDistance(Process.POINTS.get(in), this);
+			ret += this.dist(Process.POINTS.get(in));
 		}
 		return ret;
 	}
 
-	ArrayList<Integer> belongedPoints() {
+	ArrayList<Integer> belongingPoints() {
 		return new ArrayList<Integer>(this.clusterPoints);
 	}
 }
