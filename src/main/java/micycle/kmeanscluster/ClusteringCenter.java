@@ -2,40 +2,44 @@ package micycle.kmeanscluster;
 
 import java.util.ArrayList;
 
-//ÿ�ε�����ʼ��clusterPointsΪ�գ�����Ϊ�µ�mean��
+// At the beginning of each iteration, clusterPoints is empty, and the center is the new mean point
 class ClusteringCenter extends Point {
+
 	private ArrayList<Integer> clusterPoints;
 	private double[] sumOfPoints;
-	ClusteringCenter(Point p){
+
+	ClusteringCenter(Point p) {
 		super(p.pos);
 		clusterPoints = new ArrayList<Integer>();
 		this.sumOfPoints = new double[this.dimension];
 	}
-	void addPointToCluster(int index){
+
+	void addPointToCluster(int index) {
 		Point p = Process.INSTANCES.get(index);
 		clusterPoints.add(index);
 		double[] po = p.getPosition();
-		for(int i = 0; i < this.dimension; ++i){
+		for (int i = 0; i < this.dimension; ++i) {
 			sumOfPoints[i] += po[i];
 		}
 	}
-	
-	ClusteringCenter getNewCenter(){
+
+	ClusteringCenter getNewCenter() {
 		double[] pos = new double[Process.DIMENSION];
-		for(int i = 0; i < this.dimension; ++i){
+		for (int i = 0; i < this.dimension; ++i) {
 			pos[i] = sumOfPoints[i] / this.clusterPoints.size();
 		}
 		return new ClusteringCenter(new Point(pos));
 	}
-	
-	double evaluate(){
+
+	double evaluate() {
 		double ret = 0.0;
-		for(int in : clusterPoints){
+		for (int in : clusterPoints) {
 			ret += Point.squareDistance(Process.INSTANCES.get(in), this);
 		}
 		return ret;
 	}
-	ArrayList<Integer> belongedPoints(){
+
+	ArrayList<Integer> belongedPoints() {
 		return new ArrayList<Integer>(this.clusterPoints);
 	}
 }

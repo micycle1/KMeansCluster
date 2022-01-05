@@ -1,12 +1,11 @@
 package micycle.kmeanscluster;
 
-public class DimensionNotMatchException extends Exception{
-	/**
-	 * 
-	 */
+public class DimensionNotMatchException extends Exception {
+
 	private static final long serialVersionUID = 1L;
 
-	public String toString(){
+	@Override
+	public String toString() {
 		return "The two operators' dimension are not matched.";
 	}
 }
